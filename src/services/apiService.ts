@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://190.80.134.35:6112";
+const API_BASE_URL = "clasificadoria.ddns.net";
 
 const getToken = () => localStorage.getItem('token');
 

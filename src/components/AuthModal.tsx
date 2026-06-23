@@ -26,6 +26,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [cedula, setCedula] = useState('');
   const [telefono, setTelefono] = useState('');
 
+  const formatCedula = (val: string) => {
+    const numbers = val.replace(/\D/g, '').slice(0, 11);
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 10) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 10)}-${numbers.slice(10, 11)}`;
+  };
+
+  const formatTelefono = (val: string) => {
+    const numbers = val.replace(/\D/g, '').slice(0, 10);
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 6) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -126,9 +140,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                         type="text"
                         required
                         value={cedula}
-                        onChange={(e) => setCedula(e.target.value)}
+                        onChange={(e) => setCedula(formatCedula(e.target.value))}
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600/20 focus:border-yellow-600 transition-all bg-gray-50/50 focus:bg-white"
                         placeholder="000-0000000-0"
+                        maxLength={13}
                       />
                     </div>
                   </div>
@@ -142,9 +157,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                         type="tel"
                         required
                         value={telefono}
-                        onChange={(e) => setTelefono(e.target.value)}
+                        onChange={(e) => setTelefono(formatTelefono(e.target.value))}
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600/20 focus:border-yellow-600 transition-all bg-gray-50/50 focus:bg-white"
                         placeholder="809-000-0000"
+                        maxLength={12}
                       />
                     </div>
                   </div>

@@ -27,7 +27,7 @@ export const Portal = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const formatCedula = (val: string) => {
-    const numbers = val.replace(/\D/g, '');
+    const numbers = val.replace(/\D/g, '').slice(0, 11);
     if (numbers.length <= 3) return numbers;
     if (numbers.length <= 10) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 10)}-${numbers.slice(10, 11)}`;
@@ -39,7 +39,7 @@ export const Portal = () => {
   };
 
   const formatTelefono = (val: string) => {
-    const numbers = val.replace(/\D/g, '');
+    const numbers = val.replace(/\D/g, '').slice(0, 10);
     if (numbers.length <= 3) return numbers;
     if (numbers.length <= 6) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;

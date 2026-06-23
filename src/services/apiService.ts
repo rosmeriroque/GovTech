@@ -21,7 +21,17 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
       window.location.href = '/';
     }
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || `HTTP error! status: ${response.status}`);
+    let errMsg = '';
+    if (error && error.detail) {
+      if (typeof error.detail === 'string') {
+        errMsg = error.detail;
+      } else if (Array.isArray(error.detail)) {
+        errMsg = error.detail.map((err: any) => err.msg || JSON.stringify(err)).join(', ');
+      } else if (typeof error.detail === 'object') {
+        errMsg = error.detail.msg || JSON.stringify(error.detail);
+      }
+    }
+    throw new Error(errMsg || `HTTP error! status: ${response.status}`);
   }
 
   if (response.status === 204) return null;

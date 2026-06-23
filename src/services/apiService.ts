@@ -51,7 +51,6 @@ export const apiService = {
       method: 'POST',
       body: JSON.stringify(data)
     });
-    window.location.reload();
     return res;
   },
 
@@ -69,7 +68,6 @@ export const apiService = {
       method: 'PUT',
       body: JSON.stringify({ estado })
     });
-    window.location.reload();
     return res;
   },
 

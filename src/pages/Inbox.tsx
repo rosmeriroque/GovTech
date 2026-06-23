@@ -20,6 +20,7 @@ export const Inbox = () => {
   const [draftRequest, setDraftRequest] = useState<any | null>(null);
   const [attachments, setAttachments] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
     fetchRequests();
@@ -58,6 +59,7 @@ export const Inbox = () => {
     // 2. Limpieza de estado previo
     setDraftRequest(null);
     setAttachments([]);
+    setShowSuccessMessage(false);
 
     if (!req) {
       return;
@@ -88,6 +90,7 @@ export const Inbox = () => {
   const handleDraftChange = (field: string, value: any) => {
     if (draftRequest) {
       setDraftRequest({ ...draftRequest, [field]: value });
+      setShowSuccessMessage(false);
     }
   };
 
@@ -96,9 +99,22 @@ export const Inbox = () => {
     setIsSaving(true);
     
     try {
-      await apiService.updateRequestStatus(draftRequest.id_solicitud, draftRequest.estado);
-      await fetchRequests();
-      setSelectedRequest(draftRequest);
+      const updatedRequest = await apiService.updateRequestStatus(draftRequest.id_solicitud, draftRequest.estado);
+      
+      if (updatedRequest) {
+        setRequests(prevRequests => 
+          prevRequests.map(r => r.id_solicitud === updatedRequest.id_solicitud ? updatedRequest : r)
+        );
+        setSelectedRequest(updatedRequest);
+        setDraftRequest(updatedRequest);
+      } else {
+        setRequests(prevRequests => 
+          prevRequests.map(r => r.id_solicitud === draftRequest.id_solicitud ? { ...r, estado: draftRequest.estado } : r)
+        );
+        setSelectedRequest(draftRequest);
+      }
+      
+      setShowSuccessMessage(true);
     } catch (e) {
       console.error(e);
       alert("Error al actualizar el estado. Verifique su conexión.");
@@ -361,9 +377,15 @@ export const Inbox = () => {
 
             {user?.es_admin && (
               <div className="p-4 border-t border-gray-100 bg-white">
+                {showSuccessMessage && (
+                  <div className="mb-3 p-3 bg-green-50 text-green-700 text-sm rounded-lg border border-green-200 flex items-center gap-2">
+                    <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                    <span>Cambios guardados con éxito</span>
+                  </div>
+                )}
                 <button
                   onClick={handleSaveChanges}
-                  disabled={isSaving || draftRequest.estado === selectedRequest.estado}
+                  disabled={isSaving || (selectedRequest && draftRequest.estado === selectedRequest.estado)}
                   className="w-full flex items-center justify-center gap-2 bg-brand-black hover:bg-gray-900 text-white px-6 py-3.5 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-md"
                 >
                   {isSaving ? (

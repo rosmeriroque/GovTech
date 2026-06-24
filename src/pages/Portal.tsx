@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, CheckCircle, UploadCloud, Paperclip, X } from 'lucide-react';
 import { apiService } from '../services/apiService';
@@ -9,12 +9,24 @@ const cn = (...inputs: (string | undefined | null | false)[]) => twMerge(clsx(in
 
 export const Portal = () => {
   // Form State
-  const [cedula, setCedula] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [email, setEmail] = useState('');
+  const [titulo, setTitulo] = useState('');
   const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
+
+  // Profile State
+  const [profile, setProfile] = useState<{nombre_completo: string, cedula: string, telefono: string} | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await apiService.getProfile();
+        setProfile(data);
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   // Validation State
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,29 +38,7 @@ export const Portal = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const formatCedula = (val: string) => {
-    const numbers = val.replace(/\D/g, '').slice(0, 11);
-    if (numbers.length <= 3) return numbers;
-    if (numbers.length <= 10) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
-    return `${numbers.slice(0, 3)}-${numbers.slice(3, 10)}-${numbers.slice(10, 11)}`;
-  };
 
-  const handleCedulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCedula(formatCedula(e.target.value));
-    if (errors.cedula) setErrors(prev => ({ ...prev, cedula: '' }));
-  };
-
-  const formatTelefono = (val: string) => {
-    const numbers = val.replace(/\D/g, '').slice(0, 10);
-    if (numbers.length <= 3) return numbers;
-    if (numbers.length <= 6) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
-    return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
-  };
-
-  const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTelefono(formatTelefono(e.target.value));
-    if (errors.telefono) setErrors(prev => ({ ...prev, telefono: '' }));
-  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -92,9 +82,7 @@ export const Portal = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!cedula.trim()) newErrors.cedula = "La Cédula de Identidad es obligatoria.";
-    if (!nombre.trim()) newErrors.nombre = "El Nombre Completo es obligatorio.";
-    if (!telefono.trim()) newErrors.telefono = "El Número de Teléfono es obligatorio.";
+    if (!titulo.trim()) newErrors.titulo = "El Título es obligatorio.";
     if (!text.trim()) newErrors.text = "Debe describir su solicitud o situación.";
     
     setErrors(newErrors);
@@ -134,7 +122,7 @@ export const Portal = () => {
       }
 
       await apiService.createRequest({
-        titulo: `Solicitud de ${nombre}`,
+        titulo: titulo,
         descripcion: text,
         anexos: anexos.length > 0 ? anexos : undefined
       });
@@ -149,11 +137,8 @@ export const Portal = () => {
   };
 
   const handleResetForm = () => {
+    setTitulo('');
     setText('');
-    setCedula('');
-    setNombre('');
-    setTelefono('');
-    setEmail('');
     setFile(null);
     setErrors({});
     setSuccess(false);
@@ -178,92 +163,68 @@ export const Portal = () => {
           {/* 1. BLOQUE DE DATOS PERSONALES */}
           <div className="bg-white/50 p-6 rounded-2xl border border-gray-100">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-gold-dark mb-4">1. Datos Personales</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-sm font-medium text-brand-black mb-1">Cédula de Identidad <span className="text-red-500">*</span></label>
-                <input 
-                  type="text" 
-                  placeholder="000-0000000-0"
-                  className={cn(
-                    "w-full px-4 py-2.5 rounded-lg border bg-white focus:outline-none focus:ring-2 transition-all text-brand-black placeholder-gray-400 font-mono text-sm",
-                    errors.cedula ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
-                  )}
-                  value={cedula}
-                  onChange={handleCedulaChange}
-                  disabled={isSubmitting}
-                  maxLength={13}
-                />
-                {errors.cedula && <p className="mt-1 text-xs text-red-500">{errors.cedula}</p>}
+            {profile ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-brand-black mb-1">Nombre Completo</label>
+                  <p className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-brand-black font-medium">{profile.nombre_completo}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-brand-black mb-1">Cédula de Identidad</label>
+                  <p className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-brand-black font-mono text-sm">{profile.cedula}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-brand-black mb-1">Número de Teléfono</label>
+                  <p className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-brand-black font-mono text-sm">{profile.telefono}</p>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-brand-black mb-1">Nombre Completo <span className="text-red-500">*</span></label>
-                <input 
-                  type="text" 
-                  placeholder="Ej: Juan Pérez"
-                  className={cn(
-                    "w-full px-4 py-2.5 rounded-lg border bg-white focus:outline-none focus:ring-2 transition-all text-brand-black placeholder-gray-400",
-                    errors.nombre ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
-                  )}
-                  value={nombre}
-                  onChange={(e) => {
-                    setNombre(e.target.value);
-                    if (errors.nombre) setErrors(prev => ({ ...prev, nombre: '' }));
-                  }}
-                  disabled={isSubmitting}
-                />
-                {errors.nombre && <p className="mt-1 text-xs text-red-500">{errors.nombre}</p>}
+            ) : (
+              <div className="flex items-center gap-2 text-brand-gray">
+                <Loader2 className="animate-spin" size={18} />
+                Cargando datos del perfil...
               </div>
-              <div>
-                <label className="block text-sm font-medium text-brand-black mb-1">Número de Teléfono <span className="text-red-500">*</span></label>
-                <input 
-                  type="tel" 
-                  placeholder="809-000-0000"
-                  className={cn(
-                    "w-full px-4 py-2.5 rounded-lg border bg-white focus:outline-none focus:ring-2 transition-all text-brand-black placeholder-gray-400 font-mono text-sm",
-                    errors.telefono ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
-                  )}
-                  value={telefono}
-                  onChange={handleTelefonoChange}
-                  disabled={isSubmitting}
-                  maxLength={12}
-                />
-                {errors.telefono && <p className="mt-1 text-xs text-red-500">{errors.telefono}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-brand-black mb-1">
-                  Correo Electrónico <span className="text-gray-400 font-normal italic">(Opcional)</span>
-                </label>
-                <input 
-                  type="email" 
-                  placeholder="ejemplo@correo.com"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50 transition-all text-brand-black placeholder-gray-400"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* 2. BLOQUE DEL REPORTE */}
           <div className="bg-white/50 p-6 rounded-2xl border border-gray-100">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-gold-dark mb-4">2. Detalle del Reporte</h3>
-            <div>
-              <label className="block text-sm font-medium text-brand-black mb-2">Describa su solicitud o situación <span className="text-red-500">*</span></label>
-              <textarea 
-                className={cn(
-                  "w-full h-32 p-4 rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all resize-none text-brand-black placeholder-gray-400",
-                  errors.text ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
-                )}
-                placeholder="Ej: Llevamos tres semanas sin agua y la situación es insoportable..."
-                value={text}
-                onChange={(e) => {
-                  setText(e.target.value);
-                  if (errors.text) setErrors(prev => ({ ...prev, text: '' }));
-                }}
-                disabled={isSubmitting}
-              />
-              {errors.text && <p className="mt-1 text-xs text-red-500">{errors.text}</p>}
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-brand-black mb-1">Título <span className="text-red-500">*</span></label>
+                <input 
+                  type="text" 
+                  placeholder="Ej: Falta de agua en el sector"
+                  className={cn(
+                    "w-full px-4 py-2.5 rounded-lg border bg-white focus:outline-none focus:ring-2 transition-all text-brand-black placeholder-gray-400",
+                    errors.titulo ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
+                  )}
+                  value={titulo}
+                  onChange={(e) => {
+                    setTitulo(e.target.value);
+                    if (errors.titulo) setErrors(prev => ({ ...prev, titulo: '' }));
+                  }}
+                  disabled={isSubmitting}
+                />
+                {errors.titulo && <p className="mt-1 text-xs text-red-500">{errors.titulo}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-brand-black mb-1">Describa su solicitud o situación <span className="text-red-500">*</span></label>
+                <textarea 
+                  className={cn(
+                    "w-full h-32 p-4 rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all resize-none text-brand-black placeholder-gray-400",
+                    errors.text ? "border-red-400 focus:ring-red-400/50" : "border-gray-200 focus:ring-brand-gold/50"
+                  )}
+                  placeholder="Ej: Llevamos tres semanas sin agua y la situación es insoportable..."
+                  value={text}
+                  onChange={(e) => {
+                    setText(e.target.value);
+                    if (errors.text) setErrors(prev => ({ ...prev, text: '' }));
+                  }}
+                  disabled={isSubmitting}
+                />
+                {errors.text && <p className="mt-1 text-xs text-red-500">{errors.text}</p>}
+              </div>
             </div>
           </div>
 

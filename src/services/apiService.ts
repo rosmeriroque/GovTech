@@ -72,6 +72,9 @@ export const apiService = {
       body: JSON.stringify(data)
     }),
 
+  getProfile: () =>
+    request('/usuario/perfil'),
+
   createRequest: async (data: any) => {
     const res = await request('/solicitudes', {
       method: 'POST',

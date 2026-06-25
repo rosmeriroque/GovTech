@@ -66,7 +66,6 @@ export const Landing: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Abstract Hero Graphic */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -75,20 +74,36 @@ export const Landing: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-yellow-100 to-white rounded-[3rem] blur-3xl opacity-50"></div>
             <div className="relative bg-white/60 backdrop-blur-xl border border-white p-8 rounded-[2rem] shadow-2xl shadow-gray-200/50">
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex gap-4 items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-50">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${i === 1 ? 'bg-yellow-50 text-yellow-600' : 'bg-gray-50 text-gray-400'}`}>
-                      {i === 1 && <Zap size={24} />}
-                      {i === 2 && <ShieldCheck size={24} />}
-                      {i === 3 && <Scale size={24} />}
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-2.5 bg-gray-200 rounded-full w-1/3"></div>
-                      <div className="h-2 bg-gray-100 rounded-full w-2/3"></div>
-                    </div>
+              <div className="space-y-6">
+                <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-yellow-50 text-yellow-600 shrink-0">
+                    <Zap size={24} />
                   </div>
-                ))}
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Clasificación Inmediata</h4>
+                    <p className="text-sm text-gray-500">IA que analiza y categoriza en milisegundos.</p>
+                  </div>
+                </div>
+                
+                <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-start gap-4 transform translate-x-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-50 text-gray-900 shrink-0">
+                    <ShieldCheck size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Totalmente Seguro</h4>
+                    <p className="text-sm text-gray-500">Tus datos están protegidos y encriptados.</p>
+                  </div>
+                </div>
+
+                <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-50 text-gray-900 shrink-0">
+                    <Building2 size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Conexión Institucional</h4>
+                    <p className="text-sm text-gray-500">Comunicación directa con los ministerios.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -140,6 +155,48 @@ export const Landing: React.FC = () => {
               <h3 className="text-xl font-bold text-gray-900 mb-3">Gestión Transparente</h3>
               <p className="text-gray-600 leading-relaxed">
                 Trazabilidad total en cada paso del proceso, optimizando el tiempo y los recursos de las instituciones públicas.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Objectives Section */}
+      <section className="py-24 bg-[#faf9f6]">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Nuestros Objetivos</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">Lo que buscamos lograr con esta plataforma</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <motion.div 
+              whileHover={{ y: -5 }}
+              className="p-8 rounded-3xl bg-white border border-gray-100 transition-all hover:shadow-xl hover:shadow-gray-200/50"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Optimizar la gestión ciudadana</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Reducir la carga operativa de las instituciones dominicanas mediante la automatización inteligente de la clasificación y priorización de solicitudes ciudadanas.
+              </p>
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ y: -5 }}
+              className="p-8 rounded-3xl bg-white border border-gray-100 transition-all hover:shadow-xl hover:shadow-gray-200/50"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Aplicar inteligencia artificial al servicio público</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Integrar modelos de lenguaje natural para analizar, categorizar y priorizar solicitudes en categorías como Petición, Queja, Sugerencia, Reclamo y Denuncia.
+              </p>
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ y: -5 }}
+              className="p-8 rounded-3xl bg-white border border-gray-100 transition-all hover:shadow-xl hover:shadow-gray-200/50"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Garantizar accesibilidad digital</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Ofrecer una plataforma web intuitiva y accesible que permita a cualquier ciudadano dominicano registrar y dar seguimiento a sus solicitudes desde cualquier dispositivo.
               </p>
             </motion.div>
           </div>

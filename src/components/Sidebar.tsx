@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Inbox, Send, Menu, LogOut } from 'lucide-react';
+import { LayoutDashboard, Inbox, Send, Menu, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -61,7 +61,20 @@ export const Sidebar = () => {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 space-y-1">
+          <NavLink
+            to="/dashboard/profile"
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) => cn(
+              "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors w-full",
+              isActive 
+                ? "bg-brand-beige text-brand-gold-dark" 
+                : "text-brand-gray hover:bg-gray-50 hover:text-brand-black"
+            )}
+          >
+            <User size={20} className={cn("transition-colors", window.location.pathname === '/dashboard/profile' ? "text-brand-gold-dark" : "text-gray-500")} />
+            Mi Perfil
+          </NavLink>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-brand-black hover:bg-gray-50 transition-all opacity-80 hover:opacity-100 focus:outline-none"

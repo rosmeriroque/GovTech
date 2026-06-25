@@ -109,16 +109,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
           </div>
 
           <div className="p-6 overflow-y-auto">
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
-                {error}
-              </div>
-            )}
-            {successMsg && (
-              <div className="mb-4 p-3 bg-green-50 text-green-700 text-sm rounded-lg border border-green-100">
-                {successMsg}
-              </div>
-            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               {view === 'signup' && (
                 <>
@@ -257,6 +247,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 </>
               )}
 
+              {error && (
+                <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+                  {error}
+                </div>
+              )}
+              {successMsg && (
+                <div className="p-3 bg-green-50 text-green-700 text-sm rounded-lg border border-green-100">
+                  {successMsg}
+                </div>
+              )}
               <div className="pt-4">
                 <button
                   type="submit"

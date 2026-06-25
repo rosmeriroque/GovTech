@@ -75,6 +75,12 @@ export const apiService = {
   getProfile: () =>
     request('/usuario/perfil'),
 
+  updateProfile: (data: any) =>
+    request('/usuario/perfil', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    }),
+
   verifyEmail: (token: string) =>
     request(`/verify?token=${token}`),
 

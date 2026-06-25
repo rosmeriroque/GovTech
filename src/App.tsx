@@ -7,6 +7,7 @@ import { Landing } from './pages/Landing';
 import { Verify } from './pages/Verify';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { ResetPassword } from './pages/ResetPassword';
+import { Profile } from './pages/Profile';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ adminOnly = false }: { adminOnly?: boolean }) => {
@@ -33,6 +34,7 @@ function AppRoutes() {
           {/* Routes for both admin and normal users */}
           <Route path="inbox" element={<Inbox />} />
           <Route path="portal" element={<Portal />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
